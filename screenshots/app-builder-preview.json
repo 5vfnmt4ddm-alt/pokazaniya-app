@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Показания",
+      "hasCanvas": false,
+      "bodyTextLen": 1322,
+      "bodyTextHash": "4de6ccee7366fe2139e38625c07c7213da8e34f6c627c2ca7a1ed14454538f2f",
+      "bodyTextPrefix": "КОММУНАЛЬНЫЙ УЧЁТ Показания сентябрь 2026 ГВС 22,081 ХВС 48,256 ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Показания",
+      "hasCanvas": false,
+      "bodyTextLen": 741,
+      "bodyTextHash": "c3e16754ba86143d4387fd1d4a2276733d0c0766181030e9f97d21de7d5386f3",
+      "bodyTextPrefix": "КОММУНАЛЬНЫЙ УЧЁТ Показания сентябрь 2026 ГВС 22,081 ХВС 48,256 ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

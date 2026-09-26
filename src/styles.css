@@ -1,0 +1,649 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --color-bg: #c5bfb4;
+  --color-surface: #d8d2c8;
+  --color-surface-2: #ece6db;
+  --color-fg: #1c1916;
+  --color-muted: #6b6560;
+  --color-primary: #2a2724;
+  --color-primary-fg: #f3eee6;
+  --color-border: #b4ada2;
+  --color-hot: #a33b32;
+  --color-cold: #2f6f9a;
+  --color-lcd-bg: #8a9374;
+  --color-lcd-ink: #1e2418;
+  --color-lcd-dim: #6e765c;
+  --color-digit-black: #161412;
+  --color-digit-red: #c42a22;
+  --color-digit-face: #f4f1ea;
+  --color-metal: #cfc9bf;
+  --color-metal-dark: #8a847a;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius: 0.75rem;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-micro: 80ms;
+  --motion-quick: 150ms;
+  --motion-fast: 250ms;
+  --motion-slow: 400ms;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  html,
+  body,
+  #app {
+    min-height: 100%;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    background-image:
+      radial-gradient(ellipse at 20% -10%, rgba(255, 255, 255, 0.28), transparent 42%),
+      radial-gradient(ellipse at 90% 110%, rgba(40, 32, 24, 0.08), transparent 46%),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(28, 25, 22, 0.018) 2px,
+        rgba(28, 25, 22, 0.018) 3px
+      );
+    color: var(--color-fg);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* ——— Water meter ——— */
+.water-meter {
+  --ring: #c9c3b8;
+  position: relative;
+  width: min(100%, 22rem);
+  margin-inline: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%, #f0ebe2 0%, #d2ccc2 42%, #b7b0a4 78%, #9b9488 100%);
+  box-shadow:
+    0 18px 40px rgba(28, 25, 22, 0.28),
+    0 2px 0 rgba(255, 255, 255, 0.4) inset,
+    0 -8px 16px rgba(28, 25, 22, 0.18) inset;
+}
+
+.water-meter::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in oklab, var(--color-metal-dark) 55%, transparent);
+  box-shadow:
+    0 0 0 6px color-mix(in oklab, var(--ring) 90%, white),
+    0 0 0 7px #7d776e;
+  pointer-events: none;
+}
+
+.water-meter::after {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    transparent 36%,
+    transparent 62%,
+    rgba(28, 25, 22, 0.08) 100%
+  );
+  pointer-events: none;
+}
+
+.water-meter-face {
+  position: absolute;
+  inset: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 14px 16px;
+}
+
+.water-serial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 1;
+}
+
+.water-serial svg {
+  width: 7.5rem;
+  height: 0.85rem;
+  fill: var(--color-fg);
+}
+
+.water-serial span {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: #3f3a36;
+}
+
+.water-window {
+  margin-top: 8px;
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  background: #1a1815;
+  border-radius: 4px;
+  padding: 3px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45),
+    0 6px 10px rgba(28, 25, 22, 0.25) inset;
+  z-index: 1;
+  max-width: 100%;
+}
+
+.water-led {
+  width: 6px;
+  flex-shrink: 0;
+  background: linear-gradient(#7ad07a, #1f7a3a);
+  border-radius: 1px;
+  margin-right: 3px;
+  box-shadow: 0 0 6px rgba(60, 180, 80, 0.55);
+}
+
+.water-digits {
+  display: flex;
+  flex-wrap: nowrap;
+  background: #0e0d0c;
+  gap: 1px;
+}
+
+.digit-cell {
+  width: 18px;
+  height: 28px;
+  overflow: hidden;
+  background: var(--color-digit-face);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.digit-cell-red {
+  background: #f6e4e0;
+}
+
+.digit-strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--motion-fast) var(--ease-smooth-out);
+}
+
+.digit-strip span {
+  height: 28px;
+  width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 28px;
+  color: var(--color-digit-black);
+}
+
+.digit-cell-red .digit-strip span {
+  color: var(--color-digit-red);
+}
+
+.water-module {
+  margin-top: auto;
+  width: 78%;
+  height: 3.35rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 8px 16px rgba(28, 25, 22, 0.25),
+    0 1px 0 rgba(255, 255, 255, 0.35) inset;
+  z-index: 1;
+}
+
+.water-module-cold {
+  background: linear-gradient(180deg, #6ec4de 0%, #2f8fb3 42%, #1d6f90 100%);
+}
+
+.water-module-hot {
+  background: linear-gradient(180deg, #e08a7a 0%, #b54a3a 46%, #8e2f28 100%);
+}
+
+.water-module-brand {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  color: #f7fcff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.water-module-model {
+  position: absolute;
+  bottom: 3px;
+  font-size: 0.42rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.water-module-chip {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%) rotate(180deg);
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.14em;
+}
+
+.water-spec {
+  margin-top: 6px;
+  font-size: 0.48rem;
+  letter-spacing: 0.04em;
+  color: #4a453f;
+  text-align: center;
+  line-height: 1.25;
+  z-index: 1;
+}
+
+.water-badge {
+  position: static;
+  display: table;
+  margin: 0 auto 10px;
+  transform: none;
+  z-index: 2;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: var(--color-primary-fg);
+}
+
+.water-badge-hot {
+  background: var(--color-hot);
+}
+
+.water-badge-cold {
+  background: var(--color-cold);
+}
+
+.water-tap {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: 0;
+  z-index: 3;
+}
+
+.water-tap:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+}
+
+/* ——— Electric meter ——— */
+.elec-meter {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #d9d5cf 0%, #c4bfb6 55%, #b7b1a7 100%);
+  border: 1px solid #9e978c;
+  box-shadow:
+    0 10px 24px rgba(28, 25, 22, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.55) inset;
+  padding: 12px 12px 10px;
+  overflow: hidden;
+}
+
+.elec-meter::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: calc(var(--radius-lg) - 8px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  pointer-events: none;
+}
+
+.elec-bezel {
+  position: relative;
+  background: #6f7468;
+  border-radius: 6px;
+  padding: 8px 10px 8px 12px;
+  box-shadow:
+    0 0 0 2px #4e534a,
+    0 8px 14px rgba(20, 22, 16, 0.35) inset;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.elec-lcd {
+  background: linear-gradient(180deg, #9aa382 0%, #868f70 100%);
+  border-radius: 3px;
+  min-height: 4.2rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 18px 12px 10px 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+.elec-lcd-grid {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 5px,
+    rgba(30, 36, 24, 0.05) 5px 6px
+  );
+  pointer-events: none;
+}
+
+.elec-lcd-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  position: relative;
+  z-index: 1;
+}
+
+.elec-unit {
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: color-mix(in oklab, var(--color-lcd-ink) 55%, transparent);
+  font-family: var(--font-mono);
+  z-index: 1;
+}
+
+.elec-tariff {
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-lcd-ink);
+  font-family: var(--font-mono);
+  z-index: 1;
+}
+
+.elec-led {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff4d6a;
+  box-shadow:
+    0 0 10px 3px rgba(255, 60, 90, 0.7),
+    0 0 0 3px #5a524c;
+  animation: led-pulse 1.8s ease-in-out infinite;
+}
+
+.elec-meta {
+  margin-top: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.elec-brand {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #2c2925;
+}
+
+.elec-sub {
+  font-size: 0.58rem;
+  color: var(--color-muted);
+  margin-top: 1px;
+}
+
+.elec-serial {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: #3a3632;
+  text-align: right;
+}
+
+.elec-stickers {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+}
+
+.elec-sticker {
+  font-size: 0.5rem;
+  line-height: 1.2;
+  padding: 4px 6px;
+  border-radius: 2px;
+  background: #f4f1ea;
+  color: #4a453f;
+  border: 1px dashed #b9b2a6;
+}
+
+.elec-sticker-seal {
+  background: #f3d5cf;
+  border-color: #c98980;
+  color: #6a322c;
+}
+
+.elec-tap {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: 0;
+  z-index: 2;
+}
+
+.elec-tap:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* 7-segment */
+.seg {
+  --seg-w: 18px;
+  --seg-h: 32px;
+  --seg-t: 3.5px;
+  position: relative;
+  width: var(--seg-w);
+  height: var(--seg-h);
+  display: inline-block;
+  flex-shrink: 0;
+  transform: skewX(-5deg);
+}
+
+.seg span {
+  position: absolute;
+  display: block;
+  background: color-mix(in oklab, var(--color-lcd-ink) 18%, var(--color-lcd-bg));
+}
+
+.seg .is-on {
+  background: var(--color-lcd-ink);
+}
+
+.seg-a,
+.seg-g,
+.seg-d {
+  height: var(--seg-t);
+  left: 3px;
+  right: 3px;
+}
+
+.seg-a {
+  top: 0;
+  clip-path: polygon(12% 0, 88% 0, 100% 100%, 0 100%);
+}
+
+.seg-g {
+  top: calc(50% - var(--seg-t) / 2);
+  clip-path: polygon(10% 50%, 18% 0, 82% 0, 90% 50%, 82% 100%, 18% 100%);
+}
+
+.seg-d {
+  bottom: 0;
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);
+}
+
+.seg-b,
+.seg-c,
+.seg-f,
+.seg-e {
+  width: var(--seg-t);
+}
+
+.seg-f {
+  top: 3px;
+  left: 0;
+  height: calc(50% - 5px);
+  clip-path: polygon(0 8%, 100% 0, 100% 88%, 0 100%);
+}
+
+.seg-b {
+  top: 3px;
+  right: 0;
+  height: calc(50% - 5px);
+  clip-path: polygon(0 0, 100% 8%, 100% 100%, 0 88%);
+}
+
+.seg-e {
+  bottom: 3px;
+  left: 0;
+  height: calc(50% - 5px);
+  clip-path: polygon(0 0, 100% 12%, 100% 100%, 0 92%);
+}
+
+.seg-c {
+  bottom: 3px;
+  right: 0;
+  height: calc(50% - 5px);
+  clip-path: polygon(0 12%, 100% 0, 100% 92%, 0 100%);
+}
+
+.seg-comma {
+  width: 8px;
+  height: 32px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.seg-comma::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--color-lcd-ink);
+  bottom: 1px;
+  left: 1px;
+  border-radius: 1px;
+}
+
+@keyframes led-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.55;
+    filter: brightness(0.8);
+  }
+}
+
+.keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.keypad-key {
+  height: 3.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  color: var(--color-fg);
+  font-size: 1.25rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.keypad-key:active {
+  transform: scale(0.98);
+  background: var(--color-surface);
+}
+
+.summary-chip {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--color-fg);
+  background: color-mix(in oklab, var(--color-surface-2) 80%, white);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .digit-strip,
+  .keypad-key,
+  button {
+    transition: none !important;
+  }
+  .elec-led {
+    animation: none;
+  }
+}
